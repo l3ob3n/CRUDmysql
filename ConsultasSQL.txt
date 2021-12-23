@@ -1,0 +1,155 @@
+#Consultas SQL
+CREATE TABLE genero
+(
+idGenero INT,
+genero VARCHAR(30) NOT NULL,
+abrev_genero CHAR(2) NOT NULL,
+CONSTRAINT pk_genero_id PRIMARY KEY (idGenero)
+);
+
+CREATE TABLE cliente
+(
+idCliente INT,
+nombre VARCHAR(25) NOT NULL,
+apellido VARCHAR(25) NOT NULL,
+fecha_nacimiento DATE NOT NULL,
+sexo CHAR(1) NOT NULL,
+tipo_doc_identidad VARCHAR(20) NOT NULL,
+doc_identidad VARCHAR(8) NOT NULL,
+celular INT NOT NULL,
+CONSTRAINT pk_cliente_id PRIMARY KEY (idCliente)
+);
+
+CREATE TABLE video
+(
+idVideo INT,
+titulo VARCHAR(50) NOT NULL,
+idGenero INT NOT NULL,
+audiencia VARCHAR(15) NOT NULL, 
+anio int NOT NULL,
+fecha_registro DATE NOT NULL,  
+productor VARCHAR(50) NOT NULL,
+compania VARCHAR(50) NOT NULL,
+CONSTRAINT pk_video_id PRIMARY KEY (idVideo),
+CONSTRAINT fk_video_idGenero FOREIGN KEY (idGenero) REFERENCES genero (idGenero)
+);
+
+
+CREATE TABLE renta
+(
+idRenta INT, 
+idVideo INT NOT NULL,
+idCliente INT NOT NULL,
+fecha_inicio DATE NOT NULL,
+fecha_fin DATE NOT NULL,
+monto INT NOT NULL,
+CONSTRAINT pk_renta_id PRIMARY KEY (idRenta),
+CONSTRAINT fk_renta_idVideo FOREIGN KEY (idVideo) REFERENCES video (idVideo),
+CONSTRAINT fk_renta_idCliente FOREIGN KEY (idCliente) REFERENCES cliente (idCliente)
+);
+
+
+ALTER TABLE cliente 
+ADD CONSTRAINT uq_doc_identidad UNIQUE (doc_identidad)
+
+ALTER TABLE cliente
+ADD CONSTRAINT ch_sexoMF CHECK (sexo IN('M','F'))
+
+ALTER TABLE cliente
+ADD CONSTRAINT ch_celular CHECK (LENGTH(celular)=9)
+
+ALTER TABLE video
+ADD CONSTRAINT ch_anio CHECK (LENGTH(anio)=4)
+
+ALTER TABLE renta
+ADD CONSTRAINT ch_monto CHECK (monto>=10 AND monto<=250)
+
+DROP TABLE renta
+DROP TABLE video
+DROP TABLE cliente
+DROP TABLE genero
+
+INSERT INTO cliente(idCliente, nombre, apellido, fecha_nacimiento, sexo, 
+tipo_doc_identidad, doc_identidad, celular) VALUES ("12345","Jonathan","Mamani",
+"2000-05-02","M","DNI","11463498",933718381)
+
+INSERT INTO cliente(idCliente, nombre, apellido, fecha_nacimiento, sexo, 
+tipo_doc_identidad, doc_identidad, celular) VALUES ("22345","Maria","Lopez",
+"2000-12-25","F","DNI","21463498",933718382)
+
+INSERT INTO cliente(idCliente, nombre, apellido, fecha_nacimiento, sexo, 
+tipo_doc_identidad, doc_identidad, celular) VALUES ("32345","Juana","Ramirez",
+"1998-10-12","F","DNI","31463498",933718383)
+
+INSERT INTO cliente(idCliente, nombre, apellido, fecha_nacimiento, sexo, 
+tipo_doc_identidad, doc_identidad, celular) VALUES ("42345","Jose","Mariano",
+"1998-05-12","M","DNI","41463498",933718384)
+ 
+INSERT INTO cliente(idCliente, nombre, apellido, fecha_nacimiento, sexo, 
+tipo_doc_identidad, doc_identidad, celular) VALUES ("52345","Laura","Vela",
+"1997-08-12","F","DNI","51463498",933718385)
+
+
+INSERT INTO genero(idGenero, genero, abrev_genero) VALUES ("123","Accion","AC")
+
+INSERT INTO genero(idGenero, genero, abrev_genero) VALUES ("223","Comedia","CO")
+
+INSERT INTO genero(idGenero, genero, abrev_genero) VALUES ("323","Drama","DR")
+
+INSERT INTO genero(idGenero, genero, abrev_genero) VALUES ("423","Fantasia","DR")
+
+INSERT INTO genero(idGenero, genero, abrev_genero) VALUES ("523","Ciencia Ficcion",
+"CF")
+
+INSERT INTO video(idVideo, titulo, idGenero, audiencia, anio, fecha_registro, 
+productor, compania) VALUES ("1234","Terminator",523,"jovenes",1995, "2021-12-22"
+,"James Cameron","Hemdale Film Cinema")
+
+INSERT INTO video(idVideo, titulo, idGenero, audiencia, anio, fecha_registro, 
+productor, compania) VALUES ("2234","Spiderman",523,"jovenes",2021, "2021-09-28"
+,"Kevin Feige y Amy Pascal","Marvel Studios")
+
+INSERT INTO video(idVideo, titulo, idGenero, audiencia, anio, fecha_registro, 
+productor, compania) VALUES ("3234","El padrino",123,"adultos",1972, "2021-10-02"
+,"Albert S. Ruddy"," Paramount Pictures Studios")
+
+INSERT INTO video(idVideo, titulo, idGenero, audiencia, anio, fecha_registro, 
+productor, compania) VALUES ("4234","Hannibal",523,"jovenes",2001, "2021-02-18"
+,"Ridley Scott","Scott Free Productions y Universal Pictures")
+
+INSERT INTO video(idVideo, titulo, idGenero, audiencia, anio, fecha_registro, 
+productor, compania) VALUES ("5234","Parasite",323,"jovenes",2019, "2021-04-03"
+,"Bong Joon-ho","Barunson E&A Corp")
+
+INSERT INTO renta(idRenta, idVideo, idCliente, fecha_inicio, fecha_fin, monto) 
+VALUES ("54321",5234,12345,"2021-02-10","2021-03-10",80)
+
+INSERT INTO renta(idRenta, idVideo, idCliente, fecha_inicio, fecha_fin, monto) 
+VALUES ("54322",3234,22345,"2021-04-02","2021-06-10",160)
+
+INSERT INTO renta(idRenta, idVideo, idCliente, fecha_inicio, fecha_fin, monto) 
+VALUES ("54323",1234,42345,"2021-07-20","2021-08-10",100)
+
+INSERT INTO renta(idRenta, idVideo, idCliente, fecha_inicio, fecha_fin, monto) 
+VALUES ("54324",2234,32345,"2021-08-20","2021-09-10",120)
+
+INSERT INTO renta(idRenta, idVideo, idCliente, fecha_inicio, fecha_fin, monto) 
+VALUES ("54325",5234,12345,"2021-09-16","2021-11-16",180)
+
+SELECT nombre, apellido,tipo_doc_identidad,celular FROM cliente;
+SELECT * FROM genero WHERE genero=Accion;
+SELECT titulo,audiencia,anio,productor,compania FROM video like 'T%';
+SELECT idRenta,fecha_inicio,fecha_fin,monto FROM renta ORDER BY monto;
+SELECT * FROM video JOIN genero on video.idGenero=genero.idGenero;
+
+UPDATE cliente SET nombre="Raul" WHERE idCliente = 12345
+UPDATE cliente SET apellido="Gonzales" WHERE idCliente = 52345
+UPDATE cliente SET celular=950494141 WHERE idCliente = 12345
+UPDATE cliente SET tipo_doc_identidad="Carne extranjeria" WHERE idCliente = 42345
+UPDATE video SET titulo="Rapidos y fuirosos" WHERE idVideo = 1234
+
+DELETE FROM cliente WHERE idCliente = 42345
+DELETE FROM cliente WHERE idCliente = 12345
+DELETE FROM genero WHERE idCliente = 223
+DELETE FROM video WHERE idCliente = 5234
+DELETE FROM renta WHERE idCliente = 54323
